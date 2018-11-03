@@ -58,7 +58,7 @@ void Skin4W_MT(vertRender* dst, vertBoned4W* src, u32 vCount, CBoneInstance* bon
         params[i].Src = src + i * nStep;
         params[i].Count = i == (workerCount - 1) ? nLast : nStep;
         params[i].Data = bones;
-        ttapi.threads[i]->addJob([=] { Skin4W_Stream(&params[i]); });
+//        ttapi.threads[i]->addJob([=] { Skin4W_Stream(&params[i]); });
     }
     ttapi.wait();
 }

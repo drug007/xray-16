@@ -1762,12 +1762,12 @@ void PATurbulence::Execute(ParticleEffect* effect, const float dt, float& tm_max
     // to minimize wait in final spin
     u32 nSlice = p_cnt / 128;
 
-    u32 nStep = (p_cnt - nSlice) / nWorkers;
+    u32 nStep = (p_cnt - nSlice) / 1 /*nWorkers*/;
 
     //u32 nStep = (p_cnt / nWorkers);
     //Msg("Trb: %u", nStep);
 
-    for (u32 i = 0; i < nWorkers; ++i)
+    for (u32 i = 0; i < 1/*nWorkers*/; ++i)
     {
         tesParams[i].p_from = i * nStep;
         tesParams[i].p_to = (i == (nWorkers - 1)) ? p_cnt : (tesParams[i].p_from + nStep);
@@ -1779,7 +1779,8 @@ void PATurbulence::Execute(ParticleEffect* effect, const float dt, float& tm_max
         tesParams[i].frequency = frequency;
         tesParams[i].octaves = octaves;
         tesParams[i].magnitude = magnitude;
-        ttapi.threads[i]->addJob([=] { PATurbulenceExecuteStream(&tesParams[i]); });
+//        ttapi.threads[i]->addJob([=] { PATurbulenceExecuteStream(&tesParams[i]); });
+		PATurbulenceExecuteStream(&tesParams[i]);
     }
 
     ttapi.wait();

@@ -159,18 +159,18 @@ void CRenderDevice::SecondaryThreadProc(void* context)
     auto& device = *static_cast<CRenderDevice*>(context);
     while (true)
     {
-        device.syncProcessFrame.Wait();
+//        device.syncProcessFrame.Wait();
         if (device.mt_bMustExit)
         {
             device.mt_bMustExit = FALSE;
-            device.syncThreadExit.Set();
+//            device.syncThreadExit.Set();
             return;
         }
         for (u32 pit = 0; pit < device.seqParallel.size(); pit++)
             device.seqParallel[pit]();
         device.seqParallel.clear();
         device.seqFrameMT.Process();
-        device.syncFrameDone.Set();
+//        device.syncFrameDone.Set();
     }
 }
 
@@ -282,7 +282,7 @@ void CRenderDevice::on_idle()
     mProjectSaved = mProject;
 
     // renderProcessFrame.Set(); // allow render thread to do its job
-    syncProcessFrame.Set(); // allow secondary thread to do its job
+//    syncProcessFrame.Set(); // allow secondary thread to do its job
 
     const auto frameEndTime = TimerGlobal.GetElapsed_ms();
     const auto frameTime = frameEndTime - frameStartTime;
@@ -317,8 +317,30 @@ void CRenderDevice::on_idle()
     if (frameTime < updateDelta)
         Sleep(updateDelta - frameTime);
 
-    syncFrameDone.Wait(); // wait until secondary thread finish its job
+//    syncFrameDone.Wait(); // wait until secondary thread finish its job
     // renderFrameDone.Wait(); // wait until render thread finish its job
+
+    // secondary thread here begins
+        {
+    //        auto& device = *static_cast<CRenderDevice*>(context);
+            auto& device = *this;
+    //        while (true)
+            {
+    //            device.syncProcessFrame.Wait();
+    //            if (device.mt_bMustExit)
+    //            {
+    //                device.mt_bMustExit = FALSE;
+    //                device.syncThreadExit.Set();
+    //                return;
+    //            }
+                for (u32 pit = 0; pit < device.seqParallel.size(); pit++)
+                    device.seqParallel[pit]();
+                device.seqParallel.clear();
+                device.seqFrameMT.Process();
+    //            device.syncFrameDone.Set();
+            }
+        }
+    // secondary thread here ends
 
     if (!b_is_Active)
         Sleep(1);
@@ -428,8 +450,7 @@ void CRenderDevice::Run()
     }
     // Start all threads
     mt_bMustExit = FALSE;
-    thread_spawn(SecondaryThreadProc, "X-RAY Secondary thread", 0, this);
-    // thread_spawn(RenderThreadProc, "X-RAY Render thread", 0, this);
+//    thread_spawn(SecondaryThreadProc, "X-RAY Secondary thread", 0, this);
     // Message cycle
     seqAppStart.Process();
     GEnv.Render->ClearTarget();
@@ -443,15 +464,15 @@ void CRenderDevice::Run()
     pInput->GrabInput(true);
     message_loop();
     seqAppEnd.Process();
-    // Stop Balance-Thread
-    mt_bMustExit = TRUE;
-    // renderProcessFrame.Set();
-    // renderThreadExit.Wait();
-    syncProcessFrame.Set();
-    syncThreadExit.Wait();
+//    // Stop Balance-Thread
+//    mt_bMustExit = TRUE;
+//    // renderProcessFrame.Set();
+//    // renderThreadExit.Wait();
+//    syncProcessFrame.Set();
+//    syncThreadExit.Wait();
 
-    while (mt_bMustExit)
-        Sleep(0);
+//    while (mt_bMustExit)
+//        Sleep(0);
 }
 
 u32 app_inactive_time = 0;

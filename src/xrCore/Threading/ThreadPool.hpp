@@ -46,31 +46,31 @@ public:
 
     void initialize()
     {
-        const int num_threads = std::thread::hardware_concurrency();
-        R_ASSERT(num_threads > 0);
-        setThreadCount(num_threads);
+//        const int num_threads = std::thread::hardware_concurrency();
+//        R_ASSERT(num_threads > 0);
+//        setThreadCount(num_threads);
     }
 
     void destroy()
     {
-        wait();
-        threads.clear();
+//        wait();
+//        threads.clear();
     }
 
     // Sets the number of threads to be allocated in this pool
     void setThreadCount(const uint32_t count)
     {
-        threads.clear();
-        threads.reserve(count);
-        for (auto i = 0; i < count; i++)
-            threads.emplace_back(std::make_unique<Thread>());
+//        threads.clear();
+//        threads.reserve(count);
+//        for (auto i = 0; i < count; i++)
+//            threads.emplace_back(std::make_unique<Thread>());
     }
 
     // Wait until all threads have finished their work items
     void wait()
     {
-        for (auto &thread : threads)
-            thread->wait();
+//        for (auto &thread : threads)
+//            thread->wait();
     }
 };
 
